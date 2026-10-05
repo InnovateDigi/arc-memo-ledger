@@ -1,0 +1,29 @@
+{
+  "name": "arc-memo-ledger",
+  "version": "0.1.0",
+  "description": "Turn any Arc address's USDC payments, with their native memos, into a reconciled ledger. Reads Arc mainnet directly over public JSON-RPC. Deploys no contract.",
+  "type": "module",
+  "license": "MIT",
+  "private": true,
+  "engines": {
+    "node": ">=20"
+  },
+  "bin": {
+    "arc-memo-ledger": "cli.mjs"
+  },
+  "exports": {
+    ".": "./src/ledger.mjs",
+    "./keccak": "./src/keccak.mjs"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.mjs",
+    "smoke": "node scripts/smoke.mjs",
+    "serve": "node scripts/serve.mjs",
+    "record-fixtures": "node scripts/record-fixtures.mjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/InnovateDigi/arc-memo-ledger"
+  },
+  "homepage": "https://innovatedigi.github.io/arc-memo-ledger/"
+}
