@@ -138,8 +138,6 @@ is an inference from the balance, not something read from their receipts.
 
 ## 5. UNVERIFIED
 
-- **UNVERIFIED: the page on its real origin.** It was run from `http://127.0.0.1`, not from
-  https://innovatedigi.github.io/arc-memo-ledger/ . Nothing has been published.
 - **UNVERIFIED: explorer transaction links.** The docs show links of the form
   `https://explorer.arc.io/address/<address>`; the form `/tx/<hash>` used for transaction
   links is the usual one for this kind of explorer but was not opened.
@@ -160,4 +158,43 @@ is an inference from the balance, not something read from their receipts.
   were used. The log query without a contract address worked there; another provider may
   refuse it.
 - **UNVERIFIED: HTTP 429 from the live endpoint.** The built-in pace never triggered one,
-  so the retry path is covered by unit tests with a simulated 429 only.
+  so the retry path is covered by unit tests with a simulated 429 only. In the second pass
+  (section 6) a burst of 30 requests with the pause switched off was also answered without
+  a 429, so there is still no live example.
+
+## 6. Second pass after publication
+
+Done on 5 October 2026 between 10:41 and 10:56 UTC by a separate review run (also an AI
+system, not the run that wrote the code), with its own scripts where a comparison is named.
+
+- **The page on its real origin.** `node scripts/check-page.mjs https://innovatedigi.github.io/arc-memo-ledger/`
+  in headless Chrome at 10:54 UTC: 13 rows from mainnet for `0xc541c196...` with the
+  balance tick (61 requests); the filter; the receipt of `0xf0a3c947...` with 3 payments;
+  custom dates (5 Oct 2026: 13 rows, 40 requests); both downloads; Cancel; the testnet
+  endpoint; no horizontal overflow at 1280 px or 390 px; no console error; no cookie, no
+  storage. Hosts contacted: the page's own host, `rpc.mainnet.arc.io` and
+  `rpc.testnet.arc.io`. The served `src/ledger.mjs` and `app.mjs` were byte-identical to
+  the files in this repository.
+- **A busy address for one hour of chain.** `node cli.mjs 0xf56ed4fb3308d58346a07692320c851936480d33 --hours 1`,
+  blocks 24,370,707 to 24,377,801: 382 payments (380 out, 2 in), 397 requests, no retry.
+  Balance check passed to the last unit: 21.657138443619203406 + 0.000013856369105107
+  - 1.18945144 - 0.1596 = 20.308100859988308513. A separate script that reads the raw
+  logs with curl found the same 380 and 2 logs with the same sums (1189451440000000000 and
+  13856369105107 base units), the same fees implied by the two balances
+  (159600000000000000) and a transaction counter that rose by 380, the number of sent
+  transactions listed. Three rows were compared field by field with their raw receipts
+  (`0xbfa5c505...` log 3, `0x7125e0af...` log 4, `0xb97a608d...` log 14): direction,
+  counterparty, amount, block, time and fee all equal.
+- **The reference window, read live.** Both addresses of
+  `test/fixtures/independent_reference.json` (blocks 24,357,200 to 24,359,199) were read
+  again from mainnet with the command line: rows, sums, both balances and the fees equal
+  the reference (8 and 10 requests).
+- **The unlisted-fees case, read live.** `0x2a05a76b...`, blocks 24,353,000 to 24,361,999:
+  no tick and no error; "the fees of 2 other transaction(s)", 0.008076288 USDC
+  (transaction counter +10, 8 listed).
+- **Self-transfers and zero values.** Of 3,776 system-emitter logs in blocks 24,377,059 to
+  24,377,758, none had the same sender and recipient and none had value 0; all carried
+  the topic0 that `src/keccak.mjs` computes for `Transfer`.
+- **CSV.** Hostile memo texts starting with `=`, `+`, `-` and `@` were put through
+  `ledgerToCsv` and the file parsed back: no cell starts with one of those characters.
+- **CI.** The test workflow ran on Node 20, 22 and 24 after the first push: all passed.
