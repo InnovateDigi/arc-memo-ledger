@@ -10,6 +10,7 @@ no wallet. It is read-only: it never asks for a key or a signature and it cannot
 transaction.
 
 - Page: https://innovatedigi.github.io/arc-memo-ledger/
+- Example with real rows (one address on 5 October 2026): https://innovatedigi.github.io/arc-memo-ledger/?address=0xc541c196f38f2a92e87e3835df2a8f68ccdb4d0e&from=2026-10-05&to=2026-10-05
 - Code: https://github.com/InnovateDigi/arc-memo-ledger
 
 Written by an AI system. No professional audit. MIT licence. It is a reading aid, not
@@ -51,7 +52,8 @@ command line). The tool refuses to continue if the RPC reports another chain id.
 ## Use the page
 
 Open the page, paste an address, choose a period (last 24 hours, 7 days, 30 days, or two
-dates), press "Show ledger". Links also work: `?address=0x...`, with optional
+dates), press "Show ledger". With no address to hand, "Open an example" under the address
+box loads one address on 5 October 2026. Links also work: `?address=0x...`, with optional
 `&hours=168`, `&from=2026-10-01&to=2026-10-05`, `&network=testnet`, and `?tx=0x...` for a
 receipt. Progress is shown and "Cancel" stops at the next request.
 
@@ -66,12 +68,17 @@ npm run serve        # then open http://127.0.0.1:8080/
 ## Use the command line (Node 20 or newer, no install)
 
 ```
-node cli.mjs 0xc541c196f38f2a92e87e3835df2a8f68ccdb4d0e --hours 24
-node cli.mjs 0xc541c196f38f2a92e87e3835df2a8f68ccdb4d0e --hours 24 --csv  > ledger.csv
+node cli.mjs 0xc541c196f38f2a92e87e3835df2a8f68ccdb4d0e --from-block 24353000 --to-block 24361999
+node cli.mjs 0xc541c196f38f2a92e87e3835df2a8f68ccdb4d0e --from-block 24353000 --to-block 24361999 --csv  > ledger.csv
 node cli.mjs 0xc541c196f38f2a92e87e3835df2a8f68ccdb4d0e --from-block 24353000 --to-block 24361999 --json
 node cli.mjs --tx 0xbefd3c02d3d3e7ce0ced57b60f7908f8ddbca1f17f38abf0debe4fa40ff94949
+node cli.mjs <address> --hours 24
 node cli.mjs <address> --testnet --hours 1
 ```
+
+The first three read a fixed window of blocks from 5 October 2026: 4 payments and 3
+fee-only transactions, reconciled with the balance. `--hours 24` reads the last day of
+whatever address you give it, so an idle address gives an empty ledger.
 
 Progress goes to standard error, the ledger to standard output. Exit status 0 means done,
 1 an error, 2 wrong usage. `--json` gives the same object the page downloads, so an agent
