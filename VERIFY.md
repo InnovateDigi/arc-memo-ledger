@@ -213,6 +213,10 @@ system, not the run that wrote the code), with its own scripts where a compariso
   66 requests, with no console error.
   `node cli.mjs 0xc541c196f38f2a92e87e3835df2a8f68ccdb4d0e --from-block 24353000 --to-block 24361999`
   printed 4 payments and 3 fee-only rows and "RECONCILED".
+- The same check on the published page after the push (6 October 2026, 17:24 UTC): the
+  link is there at both widths, and one click showed the same 13 rows with the balance tick
+  after 37 seconds and 66 requests, with no console error. Hosts contacted: the page's own
+  host and `rpc.mainnet.arc.io`.
 - UNVERIFIED: how long the public RPC keeps serving the events and balances of 5 October.
   On 6 October it served them about 290,000 blocks back. If it stops, the example will
   show fewer rows or no balance tick.
