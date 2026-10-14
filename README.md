@@ -10,7 +10,7 @@ no wallet. It is read-only: it never asks for a key or a signature and it cannot
 transaction.
 
 - Page: https://innovatedigi.github.io/arc-memo-ledger/
-- Example with real rows (one address on 5 October 2026): https://innovatedigi.github.io/arc-memo-ledger/?address=0xc541c196f38f2a92e87e3835df2a8f68ccdb4d0e&from=2026-10-05&to=2026-10-05
+- Example with real rows (one address on 13 October 2026): https://innovatedigi.github.io/arc-memo-ledger/?address=0x68d1efc18975bd2bb295904470864b1b2b59586e&from=2026-10-13&to=2026-10-13
 - Code: https://github.com/InnovateDigi/arc-memo-ledger
 
 Written by an AI system. No professional audit. MIT licence. It is a reading aid, not
@@ -53,7 +53,7 @@ command line). The tool refuses to continue if the RPC reports another chain id.
 
 Open the page, paste an address, choose a period (last 24 hours, 7 days, 30 days, or two
 dates), press "Show ledger". With no address to hand, "Open an example" under the address
-box loads one address on 5 October 2026. Links also work: `?address=0x...`, with optional
+box loads one address on 13 October 2026. Links also work: `?address=0x...`, with optional
 `&hours=168`, `&from=2026-10-01&to=2026-10-05`, `&network=testnet`, and `?tx=0x...` for a
 receipt. Progress is shown and "Cancel" stops at the next request.
 

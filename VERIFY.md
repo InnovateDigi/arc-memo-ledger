@@ -157,10 +157,12 @@ is an inference from the balance, not something read from their receipts.
 - **UNVERIFIED: other RPC providers.** Only `rpc.mainnet.arc.io` and `rpc.testnet.arc.io`
   were used. The log query without a contract address worked there; another provider may
   refuse it.
-- **UNVERIFIED: HTTP 429 from the live endpoint.** The built-in pace never triggered one,
-  so the retry path is covered by unit tests with a simulated 429 only. In the second pass
-  (section 6) a burst of 30 requests with the pause switched off was also answered without
-  a 429, so there is still no live example.
+- **No longer unverified (14 October 2026): HTTP 429 from the live endpoint.** On 5 October
+  the built-in pace never triggered one, and in the second pass (section 6) a burst of 30
+  requests with the pause switched off was answered without one. Checks of the published
+  page met 429 answers on 7, 12, 13 and 14 October. On 13 October a check that recorded
+  every request saw the page repeat the refused `eth_getLogs` call after 1.5, 3 and 6
+  seconds, get its answer and show the right result (section 8).
 
 ## 6. Second pass after publication
 
@@ -220,3 +222,39 @@ system, not the run that wrote the code), with its own scripts where a compariso
 - UNVERIFIED: how long the public RPC keeps serving the events and balances of 5 October.
   On 6 October it served them about 290,000 blocks back. If it stops, the example will
   show fewer rows or no balance tick.
+
+## 8. Example moved to 13 October 2026, 14 October 2026
+
+- The "Open an example" link now opens one address on 13 October 2026
+  (`?address=0x68d1efc18975bd2bb295904470864b1b2b59586e&from=2026-10-13&to=2026-10-13`).
+  The README link and its line under "Use the page" say the same. Nothing else changed:
+  `src/`, `app.mjs` and the tests are as they were.
+- Why: on 14 October two checks of the old example (5 October) failed in a row, at 17:11
+  and 17:14 UTC, with "The RPC did not return the receipt of 0x...", each time for a
+  different transaction of 5 October. Asked directly at 17:13 UTC, one request at a time,
+  `https://rpc.mainnet.arc.io` answered `null` for two of four reads of those two
+  transactions (a receipt of one, the transaction of the other), while
+  `https://rpc.drpc.mainnet.arc.io` returned all four. Arc's docs say the primary endpoint
+  is load-balanced across backends that may be at slightly different block heights. On
+  13 October the same fault was seen once, for about two minutes, and the next check
+  passed. The 5 October data was then about 1,600,000 blocks (about nine days) old. That
+  the age of the data is the cause is likely, not proven; if it is, a newer day ages out
+  the same way.
+- How the address was chosen: from the USDC `Transfer` logs of the system emitter in 24
+  windows of 1,000 blocks spread over 13 October, addresses that both sent and received,
+  then exact whole-day counts for 16 of them. `0x68d1efc1...` is not a contract; on 13
+  October it sent 6 plain USDC payments and received 7. None of its rows carries a memo:
+  the memo examples are those of section 2.
+- Checked on the published page before the change, with
+  `DAY=2026-10-13 node scripts/check-page.mjs https://innovatedigi.github.io/arc-memo-ledger/ 0x68d1efc18975bd2bb295904470864b1b2b59586e`,
+  three times (14 October 2026, 17:24, 17:27 and 17:49 UTC; the first with a copy of the
+  script that also records the status of every request): custom dates 13 rows, balance
+  check passed, no error; blocks 25,663,630 to 25,833,473; payments in 2815.390606, out
+  559.947301, fees 0.002646, net change 2255.440659 USDC; 71 to 73 requests. One run met
+  two 429 answers and still showed that result.
+  `node cli.mjs 0x68d1efc18975bd2bb295904470864b1b2b59586e --from-block 25663630 --to-block 25833473`
+  (17:52 UTC) printed the same 13 rows and totals and "RECONCILED".
+- Still as before: the command line examples in the README read a fixed window of blocks
+  of 5 October, and the receipt step of `scripts/check-page.mjs` opens a transaction of
+  5 October (`0xf0a3c947...`); both can meet the same missing answers.
+- UNVERIFIED: how long the public RPC keeps serving 13 October.
